@@ -24,7 +24,7 @@ export default function Home(props) {
   return (
     <div className={css.container}>
       <Head>
-        <title>Isac's Portal</title>
+        <title>Zack's Portal</title>
       </Head>
 
       <main className={css.main}>

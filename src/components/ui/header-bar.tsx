@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { useIsAuthenticated, useMsal } from '@azure/msal-react'
 import { AppBar, Toolbar, IconButton, Typography, Button, makeStyles } from '@material-ui/core'
 import { Menu } from '@material-ui/icons'
-
-import { loginRequest, msalConfig } from '../../config/auth-config'
+import { loginRequest } from '../../config/auth-config'
 
 const useStyles = makeStyles((theme) => ({
   root: {

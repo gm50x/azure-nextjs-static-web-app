@@ -11,4 +11,3 @@ export const msalConfig: Configuration = {
 export const loginRequest: PopupRequest | RedirectRequest = {
     scopes: ['https://nsourcerylogin.onmicrosoft.com/nsourceryapp/User.Login']
 }
-
