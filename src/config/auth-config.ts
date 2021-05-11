@@ -2,13 +2,13 @@ import { Configuration, PopupRequest, RedirectRequest } from "@azure/msal-browse
 
 export const msalConfig: Configuration = {
     auth: {
-        clientId: process.env.NEXT_PUBLIC_AZURE_CLIENT_ID,
-        authority: process.env.NEXT_PUBLIC_AZURE_AUTHORITY,
-        knownAuthorities: [process.env.NEXT_PUBLIC_AZURE_KNOWN_AUTHORITIES],
+        clientId: 'dd8bfeb6-00bf-46f6-9f16-3232532a351c',
+        authority: 'https://nsourcerylogin.b2clogin.com/nsourcerylogin.onmicrosoft.com/B2C_1_SELF_SERVICE',
+        knownAuthorities: ['nsourcerylogin.b2clogin.com']
     }
 }
 
 export const loginRequest: PopupRequest | RedirectRequest = {
-    scopes: [process.env.NEXT_PUBLIC_AZURE_LOGIN_SCOPES]
+    scopes: ['https://nsourcerylogin.onmicrosoft.com/nsourceryapp/User.Login']
 }
 
