@@ -14,7 +14,21 @@ export default function Home() {
     console.log('logging in')
     instance.loginPopup(loginRequest)
       .then(result => {
+        console.log(result.account)
         console.log(result)
+
+        const accounts = instance.getAllAccounts()
+
+        if (accounts && accounts.length) {
+          instance.setActiveAccount(accounts[0])
+        }
+
+        const activeAccount = instance.getActiveAccount()
+        console.log('activeAccount', activeAccount)
+        instance.acquireTokenSilent({ ...loginRequest, account: activeAccount })
+          .then(tokenResponse => console.log(tokenResponse))
+
+
       })
       .catch(err => console.log('Err', err))
   }
