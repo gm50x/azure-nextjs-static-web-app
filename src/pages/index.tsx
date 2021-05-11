@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core'
 import styles from '../styles/Home.module.css'
 import { loginRequest } from '../config/auth-config'
 
-export default function Home(props) {
+export default function Home() {
   const { instance } = useMsal()
 
   const handlePrintTokenClick = () => {
