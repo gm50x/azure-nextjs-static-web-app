@@ -1145,6 +1145,10 @@
       float: left
     }
 
+    .hidden {
+      display: none
+    }
+
     /* endinject */
   </style>
 </head>
@@ -1163,6 +1167,8 @@
             <section>
               <img class="companyLogo" data-tenant-branding-logo="true"
                 src="https://zacksportalb2ctemplates.blob.core.windows.net/templates/logo.svg" alt="Company Logo">
+            </section>
+            <section class="intro-section">
               <h3 class="form-title">Bem-vindo!</h3>
               <p class="form-intro">Para efetuar o cadastro precisamos das informações abaixo</p>
             </section>
@@ -1227,58 +1233,67 @@
             (regex, arg1, arg2, arg3, arg4) => `${arg1}.${arg2}.${arg3}-${arg4}`)
       }
 
-      const cpfContainer = document.querySelector('#extension_CPF').closest('div')
-      const cpfErrorElm = Array.from(cpfContainer.children).find(x => x.classList.value.includes('error'))
       const cpfInput = document.querySelector('#extension_CPF')
+
+      const isRegistrationForm = Boolean(cpfInput)
+
+      const cpfContainer = isRegistrationForm && cpfinput.closest('div')
+      const cpfErrorElm = isRegistrationForm && Array.from(cpfContainer.children).find(x => x.classList.value.includes('error'))
       const createButton = document.querySelector('#continue')
 
-      $('#extension_CPF').off('input')
-      cpfInput.addEventListener('input', (event) => {
-        clearCpfErrors()
-        const value = formatCPF(event.target.value)
-        event.target.value = value
-      })
-
-      const showCpfErrors = () => {
-        setTimeout(() => {
-          cpfErrorElm.textContent = 'O CPF inserido é inválido'
-          cpfErrorElm.setAttribute('aria-hidden', 'false')
-          cpfErrorElm.classList.add('show')
-          cpfContainer.classList.add('validate')
-
-          createButton.setAttribute('disabled', 'true')
-        }, 1000)
+      if (!isRegistrationForm) {
+        document.querySelector('section.intro-section').classList.add('hidden')
       }
 
-      const clearCpfErrors = () => {
-        cpfErrorElm.textContent = ''
-        cpfErrorElm.setAttribute('aria-hidden', 'true')
-        cpfErrorElm.classList.remove('show')
-        cpfContainer.classList.remove('validate')
+      if (isRegistrationForm) {
+        $('#extension_CPF').off('input')
+        cpfInput.addEventListener('input', (event) => {
+          clearCpfErrors()
+          const value = formatCPF(event.target.value)
+          event.target.value = value
+        })
 
-        createButton.removeAttribute('disabled')
-      }
+        const showCpfErrors = () => {
+          setTimeout(() => {
+            cpfErrorElm.textContent = 'O CPF inserido é inválido'
+            cpfErrorElm.setAttribute('aria-hidden', 'false')
+            cpfErrorElm.classList.add('show')
+            cpfContainer.classList.add('validate')
 
-      cpfInput.addEventListener('blur', (event) => {
-        const value = event.target.value
-        if (!validateCPF(value)) {
-          showCpfErrors()
+            createButton.setAttribute('disabled', 'true')
+          }, 1000)
         }
-      })
 
-      /*****
-       * Manually indexing these elements as a workaround to microsoft preventing 
-       * emails from being ordered in different positions, we add order property to
-       * .EmailBox and .Password classes in this file too.
-       *****/
-      document.querySelector('#extension_FullName').setAttribute('tabindex', '1')
-      document.querySelector('#extension_CPF').setAttribute('tabindex', '2')
-      document.querySelector('#extension_Profile').setAttribute('tabindex', '3')
-      document.querySelector('#email').setAttribute('tabindex', '4')
-      document.querySelector('#newPassword').setAttribute('tabindex', '5')
-      document.querySelector('#reenterPassword').setAttribute('tabindex', '6')
-      document.querySelector('#continue').setAttribute('tabindex', '7')
-      document.querySelector('#cancel').setAttribute('tabindex', '8')
+        const clearCpfErrors = () => {
+          cpfErrorElm.textContent = ''
+          cpfErrorElm.setAttribute('aria-hidden', 'true')
+          cpfErrorElm.classList.remove('show')
+          cpfContainer.classList.remove('validate')
+
+          createButton.removeAttribute('disabled')
+        }
+
+        cpfInput.addEventListener('blur', (event) => {
+          const value = event.target.value
+          if (!validateCPF(value)) {
+            showCpfErrors()
+          }
+        })
+
+        /*****
+         * Manually indexing these elements as a workaround to microsoft preventing 
+         * emails from being ordered in different positions, we add order property to
+         * .EmailBox and .Password classes in this file too.
+         *****/
+        document.querySelector('#extension_FullName').setAttribute('tabindex', '1')
+        document.querySelector('#extension_CPF').setAttribute('tabindex', '2')
+        document.querySelector('#extension_Profile').setAttribute('tabindex', '3')
+        document.querySelector('#email').setAttribute('tabindex', '4')
+        document.querySelector('#newPassword').setAttribute('tabindex', '5')
+        document.querySelector('#reenterPassword').setAttribute('tabindex', '6')
+        document.querySelector('#continue').setAttribute('tabindex', '7')
+        document.querySelector('#cancel').setAttribute('tabindex', '8')
+      }
     })
   </script>
 
