@@ -19,8 +19,8 @@
 
   <style id="root">
     :root {
-      --primary-font: 'Jura', sans-serif;
-      --secondary-font: 'Titillium Web', sans-serif;
+      --font-primary: 'Jura', sans-serif;
+      --font-secondary: 'Titillium Web', sans-serif;
 
       --color-primary: #f9493d;
       --color-primary-contrast: #f0f0f0;
@@ -191,7 +191,7 @@
     }
 
     body {
-      font-family: var(--secondary-font);
+      font-family: var(--font-secondary);
       background-attachment: fixed;
       background-color: var(--color-background-dark);
       background-position: center;
@@ -378,7 +378,8 @@
       margin-top: 10px
     }
 
-    .buttons button:hover {
+    .buttons button:hover,
+    .buttons button:focus {
       background-color: var(--color-primary-hover);
       border-color: var(--color-border-dark)
     }
@@ -407,8 +408,10 @@
       text-align: left
     }
 
-    .buttons #cancel:hover {
-      color: var(--color-text-dark) !important
+    .buttons #cancel:hover,
+    .buttons #cancel:focus {
+      color: var(--color-text-dark) !important;
+      text-decoration: underline;
     }
 
     .buttons #cancel:before {
@@ -469,7 +472,7 @@
       width: 70%;
 
       /* border-radius: .5rem; */
-      /* text-indent: 20px; */
+      text-indent: 0;
       background-color: var(--color-background-light)
     }
 
@@ -477,12 +480,20 @@
       border-bottom: 2px solid var(--color-border-dark)
     }
 
+    #attributeList ul li select:focus {
+      border-bottom: 2px solid var(--color-border-dark)
+    }
+
     #attributeList ul li input:focus-visible {
       outline: none;
     }
 
+    #attributeList ul li select:focus-visible {
+      outline: none;
+    }
+
     #attributeList ul li input::-webkit-input-placeholder {
-      text-indent: 20px
+      text-indent: 0;
     }
 
     #attributeList ul li .attrEntry {
@@ -705,6 +716,10 @@
       margin-top: 30px
     }
 
+    #continue[disabled] {
+      cursor: not-allowed;
+    }
+
     @media screen and (max-width:100%) {
       .row .panel-default .panel-body {
         margin-top: 40px
@@ -818,11 +833,6 @@
       #attributeVerification .buttons #continue {
         height: 40px
       }
-
-      #attributeVerification .buttons #cancel {
-        font-size: 1em;
-        left: 40%
-      }
     }
 
     .panel,
@@ -876,7 +886,7 @@
       height: 70px;
 
       margin-top: 5rem;
-      margin-bottom: 5rem;
+      margin-bottom: 1.5rem;
     }
 
     .self_asserted_container .row .panel-default .panel-body .branding h1 {
@@ -892,9 +902,19 @@
     }
 
     .self_asserted_container .row .panel-default .panel-body .intro {
+      /* CUSTOMIZED */
       display: none;
       text-align: left;
       margin-top: 2rem
+    }
+
+    .panel-body h3.form-title {
+      font-weight: 700;
+      margin-bottom: 1.5rem !important;
+    }
+
+    .panel-body p.form-intro {
+      margin-bottom: 1.5rem;
     }
 
     .self_asserted_container .row .panel-default .panel-body #api #attributeVerification .pageLevel {
@@ -1127,7 +1147,6 @@
 
     /* endinject */
   </style>
-
 </head>
 
 <body>
@@ -1141,15 +1160,128 @@
       <div class="col-lg-6">
         <div class="panel panel-default">
           <div class="panel-body">
-            <img class="companyLogo" data-tenant-branding-logo="true"
-              src="https://zacksportalb2ctemplates.blob.core.windows.net/templates/logo.svg" alt="Company Logo">
-            <div id="api">
-            </div>
+            <section>
+              <img class="companyLogo" data-tenant-branding-logo="true"
+                src="https://zacksportalb2ctemplates.blob.core.windows.net/templates/logo.svg" alt="Company Logo">
+              <h3 class="form-title">Bem-vindo!</h3>
+              <p class="form-intro">Para efetuar o cadastro precisamos das informações abaixo</p>
+            </section>
+            <section>
+              <div id="api"></div>
+            </section>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    $(document).ready(() => {
+
+      /*****
+       * CPF Input Validation and Formating
+       *****/
+      const validateCPF = (cpf) => {
+        const value = cpf.toString()
+          .padStart(11, '0')
+          .replace(/\D/g, '')
+
+        const invalidValues = [
+          '00000000000',
+          '11111111111',
+          '22222222222',
+          '33333333333',
+          '44444444444',
+          '55555555555',
+          '66666666666',
+          '77777777777',
+          '88888888888',
+          '99999999999'
+        ]
+        if (invalidValues.includes(value)) {
+          return false
+        }
+
+        const base = value.substring(0, 9)
+        const firstDigitBase = value.substring(0, 9)
+        const secondDigitBase = value.substring(0, 10)
+        const firstDigit = (11 - firstDigitBase.split('').map(x => Number(x)).reduce((acc, val, index) => acc + val * (firstDigitBase.length - index + 1), 0) % 11) % 10
+        const secondDigit = (11 - secondDigitBase.split('').map(x => Number(x)).reduce((acc, val, index) => acc + val * (secondDigitBase.length - index + 1), 0) % 11) % 10
+
+        return value === `${base}${firstDigit}${secondDigit}`
+      }
+
+
+      const formatCPF = (cpf) => {
+        const currentValue = cpf ? cpf.toString().replace(/\D/g, '') : ''
+
+        if (!currentValue) {
+          return '';
+        }
+
+        return currentValue
+          .substring(currentValue.length - 11)
+          .padStart(11, '0')
+          .replace(
+            /(\d{3})(\d{3})(\d{3})(\d{2})/,
+            (regex, arg1, arg2, arg3, arg4) => `${arg1}.${arg2}.${arg3}-${arg4}`)
+      }
+
+      const cpfContainer = document.querySelector('#extension_CPF').closest('div')
+      const cpfErrorElm = Array.from(cpfContainer.children).find(x => x.classList.value.includes('error'))
+      const cpfInput = document.querySelector('#extension_CPF')
+      const createButton = document.querySelector('#continue')
+
+      $('#extension_CPF').off('input')
+      cpfInput.addEventListener('input', (event) => {
+        clearCpfErrors()
+        const value = formatCPF(event.target.value)
+        event.target.value = value
+      })
+
+      const showCpfErrors = () => {
+        setTimeout(() => {
+          cpfErrorElm.textContent = 'O CPF inserido é inválido'
+          cpfErrorElm.setAttribute('aria-hidden', 'false')
+          cpfErrorElm.classList.add('show')
+          cpfContainer.classList.add('validate')
+
+          createButton.setAttribute('disabled', 'true')
+        }, 1000)
+      }
+
+      const clearCpfErrors = () => {
+        cpfErrorElm.textContent = ''
+        cpfErrorElm.setAttribute('aria-hidden', 'true')
+        cpfErrorElm.classList.remove('show')
+        cpfContainer.classList.remove('validate')
+
+        createButton.removeAttribute('disabled')
+      }
+
+      cpfInput.addEventListener('blur', (event) => {
+        const value = event.target.value
+        if (!validateCPF(value)) {
+          showCpfErrors()
+        }
+      })
+
+      /*****
+       * Manually indexing these elements as a workaround to microsoft preventing 
+       * emails from being ordered in different positions, we add order property to
+       * .EmailBox and .Password classes in this file too.
+       *****/
+      document.querySelector('#extension_FullName').setAttribute('tabindex', '1')
+      document.querySelector('#extension_CPF').setAttribute('tabindex', '2')
+      document.querySelector('#extension_Profile').setAttribute('tabindex', '3')
+      document.querySelector('#email').setAttribute('tabindex', '4')
+      document.querySelector('#newPassword').setAttribute('tabindex', '5')
+      document.querySelector('#reenterPassword').setAttribute('tabindex', '6')
+      document.querySelector('#continue').setAttribute('tabindex', '7')
+      document.querySelector('#cancel').setAttribute('tabindex', '8')
+    })
+  </script>
+
 </body>
 
 </html>

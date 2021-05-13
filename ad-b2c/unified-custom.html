@@ -19,8 +19,8 @@
 
   <style id="root">
     :root {
-      --primary-font: 'Jura', sans-serif;
-      --secondary-font: 'Titillium Web', sans-serif;
+      --font-primary: 'Jura', sans-serif;
+      --font-secondary: 'Titillium Web', sans-serif;
 
       --color-primary: #f9493d;
       --color-primary-contrast: #f0f0f0;
@@ -191,7 +191,7 @@
 
     body {
       /* font-family: Segoe UI, SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif; */
-      font-family: var(--secondary-font);
+      font-family: var(--font-secondary);
       background-attachment: fixed;
       background-color: var(--color-background-dark);
       background-position: center;
@@ -1272,6 +1272,21 @@
       </div>
     </div>
   </div>
+
+  <script>
+    /*****
+     * Manually indexing these elements as a workaround to microsoft injecting 
+     * forgot password before the password input field, thus breaking the tab-index
+     *****/
+    $(document).ready(() => {
+      document.querySelector('#email').setAttribute('tabindex', '1')
+      document.querySelector('#password').setAttribute('tabindex', '2')
+      document.querySelector('#next').setAttribute('tabindex', '3')
+      document.querySelector('#forgotPassword').setAttribute('tabindex', '4')
+      document.querySelector('#createAccount').setAttribute('tabindex', '5')
+    })
+  </script>
+  </script>
 </body>
 
 </html>
